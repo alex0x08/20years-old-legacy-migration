@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.Ox08.samples</groupId>
+    <artifactId>migration-step1-crud</artifactId>
+    <packaging>war</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>0x08 Experiments: Migration Step 1, CRUD App</name>
+    <url>https://teletype.in/@alex0x08</url>
+    <description>This is the step1 sample project</description>
+
+    <developers>
+        <developer>
+            <name>Alex Chernyshev</name>
+            <timezone>GMT+4</timezone>
+            <email>alex3.145@gmail.com</email>
+            <url>https://teletype.in/@alex0x08</url>
+        </developer>
+    </developers>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.release>21</maven.compiler.release>
+        <struts.version>7.0.0-M3-SNAPSHOT</struts.version>
+        <spring.version>6.1.4</spring.version>
+        <hibernate.version>6.4.4.Final</hibernate.version>
+        <jakartaEEVersion>10.0.0</jakartaEEVersion>
+    </properties>
+
+    <repositories>
+
+            <repository>
+                <id>apache.nexus</id>
+                <name>ASF Nexus Staging</name>
+                <url>https://repository.apache.org/content/groups/staging/</url>
+            </repository>
+
+
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-web-api</artifactId>
+            <version>${jakartaEEVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+
+
+        <!--  Struts 2 -->
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-core</artifactId>
+            <version>${struts.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-sitemesh-plugin</artifactId>
+            <version>${struts.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.struts</groupId>
+            <artifactId>struts2-spring-plugin</artifactId>
+            <version>${struts.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Spring framework -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <!-- Spring framework - used for factory beans & stuff -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>3.2.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>8.0.1.Final</version>
+        </dependency>
+
+
+
+        <!-- Hibernate -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.common</groupId>
+            <artifactId>hibernate-commons-annotations</artifactId>
+            <version>6.0.6.Final</version>
+        </dependency>
+
+        <!-- H2 Database -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.224</version>
+        </dependency>
+
+        <!-- Misc -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.9</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>crudapp</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                    <compilerArgs>
+                        <arg>-Xlint:all,-processing</arg>
+                        <arg>-Xlint:-serial</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <!-- Jetty server plugin -->
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>11.0.18</version>
+                <configuration>
+                    <webApp>
+                        <contextPath>/${project.artifactId}</contextPath>
+                    </webApp>
+                </configuration>
+                <dependencies>
+                </dependencies>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/data/jpa
+       https://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <!-- need to enable classpath scan, because we have some annotations now -->
+    <context:component-scan base-package="com.Ox08.samples.migration.step1.crudapp" />
+    <!--
+            proxy-target-class = "true" is required for Struts injection process
+    -->
+    <tx:annotation-driven proxy-target-class = "true" />
+
+    <!--
+        Note that org.springframework.beans.factory.config.PropertyPlaceholderConfigurer has been deprecated,
+        and replaced by org.springframework.context.support.PropertySourcesPlaceholderConfigurer
+    -->
+    <bean id="propertyConfigurer"
+          class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
+        <property name="location" value="classpath:jdbc.properties"/>
+    </bean>
+    <!--
+        In original version, there was the Hibernates 'sessionFactory', with manual
+        transaction handling and so without JPA repositories.
+        I replaced this completely with local transaction & entity managers.
+     -->
+    <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+    <!--
+        Replaced Hibernates default C3P0 pool with better one.
+        So below is the pool configuration.
+    -->
+    <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+        <property name="dataSourceProperties" >
+            <props>
+                <prop key="url">${db.url}</prop>
+                <prop key="user">${db.username}</prop>
+                <prop key="password">${db.password}</prop>
+            </props>
+        </property>
+        <property name="connectionTestQuery" value="SELECT 1" />
+        <property name="dataSourceClassName"
+                  value="${db.driverClassName}" />
+    </bean>
+    <!--
+        Now we have dedicated datasource binding, that could be easily replaced with
+        external datasource (ex. from Tomcat resources).
+     -->
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" >
+        <constructor-arg ref="hikariConfig" />
+    </bean>
+
+    <!-- replacement for old 'sessionFactory' based configuration -->
+    <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="com.Ox08.samples.migration.step1.crudapp.model" />
+        <property name="persistenceProviderClass" value="org.hibernate.jpa.HibernatePersistenceProvider" />
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+        </property>
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.hbm2ddl.auto"
+                       value="update"/>
+            </map>
+        </property>
+    </bean>
+
+    <!-- enabling JPA repositories -->
+    <jpa:repositories base-package="com.Ox08.samples.migration.step1.crudapp.repo" />
+
+</beans>
+
